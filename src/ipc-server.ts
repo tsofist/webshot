@@ -50,64 +50,110 @@ parent.respondTo("shutdown", (done: (error?: any, result?: string|Buffer) => voi
     });
 });
 
-function useBrowserWindow(url: string,
-                          onLoaded: (win: BrowserWindow) => PromiseMay<void>,
-                          onError: (error: any) => void,
-                          allowJS = false): void {
-    let win: BrowserWindow|undefined = new electron.BrowserWindow({
-        show:           true,
-        alwaysOnTop:    false,
-        webPreferences: {
-            nodeIntegration:             false,
-            javascript:                  allowJS,
-            allowRunningInsecureContent: true,
-            webgl:                       false,
-            webaudio:                    false,
-            defaultEncoding:             "utf8"
-        }
-    });
-    const onFinalize = (): void => {
-        if (win) win.close();
-        win = undefined;
-    };
-    try {
-        win.webContents.setAudioMuted(true);
-        win.webContents
-           .once("did-fail-load", () => {
-               onFinalize();
-               onError(new Error(`Failed to load ${url}`));
-           })
-           .once("did-finish-load", () => {
-               try {
-                   const promiseMay = onLoaded(win!);
-                   if (promiseMay && typeof promiseMay.then === TS_FUNCTION) {
-                       promiseMay.then(
-                           onFinalize,
-                           onFinalize
-                       );
-                   } else
-                       onFinalize();
-               } catch (error) {
-                   onError(error);
-               }
-           });
-        win.loadURL(url, { /*todo*/ });
-    } catch (error) {
-        onError(error);
-    }
+interface ShotOptions {
+    sourceUrl?: string;
+    sourceHTML?: string;
+    filename?: string;
+    format: ShotFormat;
 }
 
 const SUP_FMT_TYPES = ["pdf", "png", "jpeg", "bmp"];
 
+function useBrowserWindow<T>(url: string,
+                             onBrowserWindow: (win: BrowserWindow) => PromiseMay<T>,
+                             allowJS = false): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        let win: BrowserWindow|undefined = new electron.BrowserWindow({
+            show:           false,
+            alwaysOnTop:    false,
+            webPreferences: {
+                nodeIntegration:             false,
+                javascript:                  allowJS,
+                allowRunningInsecureContent: true,
+                webgl:                       false,
+                webaudio:                    false,
+                defaultEncoding:             "utf8"
+            }
+        });
+        const dispose = (): void => {
+            if (win) win.close();
+            win = undefined;
+        };
+        try {
+            win.webContents.setAudioMuted(true);
+            win.webContents
+               .once("did-fail-load", () => {
+                   dispose();
+                   reject(new Error(`Failed to load ${url}`));
+               })
+               .once("did-finish-load", () => {
+                   try {
+                       const promiseMay = onBrowserWindow(win!);
+                       if (promiseMay && typeof (promiseMay as Promise<T>).then === TS_FUNCTION) {
+                           (promiseMay as Promise<T>).then(
+                               (data) => {
+                                   dispose();
+                                   resolve(data);
+                               },
+                               dispose
+                           );
+                       } else {
+                           dispose();
+                           resolve(promiseMay);
+                       }
+                   } catch (error) {
+                       dispose();
+                       reject(error);
+                   }
+               });
+            win.loadURL(url, { /*todo?*/ });
+        } catch (error) {
+            dispose();
+            reject(error);
+        }
+    });
+}
+
+function doPrint(win: BrowserWindow, options: ShotOptions): Promise<string|Buffer> {
+    return (options.sourceHTML
+            ? (win.webContents
+                  .executeJavaScript(`document.documentElement.innerHTML=decodeURIComponent("${ encodeURIComponent(options.sourceHTML) }");`))
+            : Promise.resolve()
+    ).then(() => new Promise<string|Buffer>((resolve, reject) => {
+        if (options.format.type === "pdf") win
+            .webContents
+            .printToPDF(options.format as any, (error, data) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    if (options.filename) writeFile(options.filename, data, (error) => {
+                        if (error) reject(error); else
+                            resolve(options.filename);
+                    }); else
+                        resolve(data);
+                }
+            });
+        else win
+            .capturePage((image) => {
+                switch (options.format.type) {
+                    case "png":
+                        resolve(image.toPNG(options.format));
+                        break;
+                    case "jpeg":
+                        resolve(image.toJPEG(options.format.quality));
+                        break;
+                    case "bmp":
+                        resolve(image.toBitmap(options.format));
+                        break;
+                }
+            });
+
+    }));
+}
+
 parent.respondTo(
     "shot",
-    function (options: {
-                  sourceUrl?: string;
-                  sourceHTML?: string;
-                  filename?: string;
-                  format: ShotFormat;
-              },
-              done: (error: any, result?: string|Buffer) => void) {
+    (options: ShotOptions, done: (error: any, result?: string|Buffer) => void) => {
         //todo check format options
         if ((options.sourceUrl && options.sourceHTML) || !(options.sourceUrl || options.sourceHTML)) {
             done("Ambiguously SHOT options");
@@ -120,45 +166,11 @@ parent.respondTo(
         } else {
             useBrowserWindow(
                 options.sourceUrl || "about:blank",
-                (win) => {
-                    return (options.sourceHTML
-                            ? (win.webContents
-                                  .executeJavaScript(`document.documentElement.innerHTML=decodeURIComponent("${ encodeURIComponent(options.sourceHTML) }");`))
-                            : Promise.resolve()
-                    ).then(() => {
-                        if (options.format.type === "pdf") {
-                            win.webContents.printToPDF(options.format as any, (error, data) => {
-                                win.close();
-                                if (error) {
-                                    done(error);
-                                } else {
-                                    if (options.filename) writeFile(options.filename, data, (error) => {
-                                        if (error) done(error); else
-                                            done(undefined, options.filename);
-                                    }); else
-                                        done(undefined, data);
-                                }
-                            });
-                        } else {
-                            win.capturePage((image) => {
-                                win.close();
-                                switch (options.format.type) {
-                                    case "png":
-                                        done(undefined, image.toPNG(options.format));
-                                        break;
-                                    case "jpeg":
-                                        done(undefined, image.toJPEG(options.format.quality));
-                                        break;
-                                    case "bmp":
-                                        done(undefined, image.toBitmap(options.format));
-                                        break;
-                                }
-                            });
-                        }
-                    });
-                },
-                done,
+                (win) => doPrint(win, options),
                 options.sourceUrl == null
+            ).then(
+                (data) => { done(undefined, data); },
+                done
             );
         }
     }
