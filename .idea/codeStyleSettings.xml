@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectCodeStyleSettingsManager">
+    <option name="PER_PROJECT_SETTINGS">
+      <value>
+        <option name="AUTODETECT_INDENTS" value="false" />
+        <option name="OTHER_INDENT_OPTIONS">
+          <value>
+            <option name="INDENT_SIZE" value="4" />
+            <option name="CONTINUATION_INDENT_SIZE" value="4" />
+            <option name="TAB_SIZE" value="4" />
+            <option name="USE_TAB_CHARACTER" value="false" />
+            <option name="SMART_TABS" value="false" />
+            <option name="LABEL_INDENT_SIZE" value="0" />
+            <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+            <option name="USE_RELATIVE_INDENTS" value="false" />
+          </value>
+        </option>
+        <option name="JD_ADD_BLANK_AFTER_PARM_COMMENTS" value="true" />
+        <option name="JD_ADD_BLANK_AFTER_RETURN" value="true" />
+        <option name="JD_KEEP_INVALID_TAGS" value="false" />
+        <option name="JD_KEEP_EMPTY_PARAMETER" value="false" />
+        <option name="JD_KEEP_EMPTY_EXCEPTION" value="false" />
+        <option name="JD_KEEP_EMPTY_RETURN" value="false" />
+        <option name="HTML_ATTRIBUTE_WRAP" value="0" />
+        <option name="HTML_TEXT_WRAP" value="0" />
+        <option name="HTML_KEEP_BLANK_LINES" value="1" />
+        <option name="HTML_ENFORCE_QUOTES" value="true" />
+        <CssCodeStyleSettings>
+          <option name="HEX_COLOR_UPPER_CASE" value="true" />
+          <option name="KEEP_SINGLE_LINE_BLOCKS" value="true" />
+        </CssCodeStyleSettings>
+        <JSCodeStyleSettings>
+          <option name="ALIGN_OBJECT_PROPERTIES" value="1" />
+          <option name="REFORMAT_C_STYLE_COMMENTS" value="false" />
+          <option name="OBJECT_LITERAL_WRAP" value="0" />
+          <option name="IMPORTS_WRAP" value="0" />
+          <option name="SPACES_WITHIN_OBJECT_LITERAL_BRACES" value="true" />
+          <option name="SPACES_WITHIN_IMPORTS" value="true" />
+          <option name="USE_CHAINED_CALLS_GROUP_INDENTS" value="true" />
+        </JSCodeStyleSettings>
+        <JSON>
+          <option name="PROPERTY_ALIGNMENT" value="1" />
+          <option name="ARRAY_WRAPPING" value="0" />
+        </JSON>
+        <MultiMarkdownCodeStyleSettings>
+          <option name="RIGHT_MARGIN" value="72" />
+        </MultiMarkdownCodeStyleSettings>
+        <SqlCodeStyleSettings>
+          <option name="WRAP_INSIDE_CREATE_TABLE" value="1" />
+          <option name="KEYWORD_CASE" value="2" />
+        </SqlCodeStyleSettings>
+        <TypeScriptCodeStyleSettings>
+          <option name="FORCE_SEMICOLON_STYLE" value="true" />
+          <option name="ALIGN_OBJECT_PROPERTIES" value="1" />
+          <option name="REFORMAT_C_STYLE_COMMENTS" value="false" />
+          <option name="USE_PUBLIC_MODIFIER" value="true" />
+          <option name="FORCE_QUOTE_STYlE" value="true" />
+          <option name="ENFORCE_TRAILING_COMMA" value="Remove" />
+          <option name="VAR_DECLARATION_WRAP" value="0" />
+          <option name="OBJECT_LITERAL_WRAP" value="0" />
+          <option name="IMPORTS_WRAP" value="0" />
+          <option name="UNION_TYPES_WRAP" value="0" />
+          <option name="SPACES_WITHIN_OBJECT_LITERAL_BRACES" value="true" />
+          <option name="SPACES_WITHIN_IMPORTS" value="true" />
+          <option name="SPACES_WITHIN_UNION_TYPES" value="false" />
+          <option name="USE_CHAINED_CALLS_GROUP_INDENTS" value="true" />
+          <option name="IMPORT_SORT_MEMBERS" value="false" />
+          <option name="IMPORT_PREFER_ABSOLUTE_PATH" value="TRUE" />
+        </TypeScriptCodeStyleSettings>
+        <XML>
+          <option name="XML_ATTRIBUTE_WRAP" value="0" />
+          <option name="XML_TEXT_WRAP" value="0" />
+          <option name="XML_KEEP_BLANK_LINES" value="1" />
+          <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
+        </XML>
+        <editorconfig>
+          <option name="ENABLED" value="false" />
+        </editorconfig>
+        <codeStyleSettings language="CSS">
+          <indentOptions>
+            <option name="CONTINUATION_INDENT_SIZE" value="4" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="HTML">
+          <indentOptions>
+            <option name="CONTINUATION_INDENT_SIZE" value="4" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="JAVA">
+          <option name="ALIGN_GROUP_FIELD_DECLARATIONS" value="true" />
+          <option name="CALL_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
+          <option name="CALL_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />
+          <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
+          <option name="KEEP_SIMPLE_CLASSES_IN_ONE_LINE" value="true" />
+          <indentOptions>
+            <option name="CONTINUATION_INDENT_SIZE" value="4" />
+            <option name="LABEL_INDENT_ABSOLUTE" value="true" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="JSON">
+          <option name="SPACE_WITHIN_BRACES" value="true" />
+          <indentOptions>
+            <option name="INDENT_SIZE" value="4" />
+            <option name="CONTINUATION_INDENT_SIZE" value="4" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="JavaScript">
+          <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
+          <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
+          <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
+          <option name="ALIGN_MULTILINE_FOR" value="false" />
+          <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
+          <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
+          <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
+          <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
+          <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
+          <option name="ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE" value="true" />
+          <option name="ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE" value="true" />
+        </codeStyleSettings>
+        <codeStyleSettings language="SQL">
+          <option name="KEEP_LINE_BREAKS" value="false" />
+          <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
+          <indentOptions>
+            <option name="CONTINUATION_INDENT_SIZE" value="2" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="Stylus">
+          <indentOptions>
+            <option name="INDENT_SIZE" value="4" />
+            <option name="CONTINUATION_INDENT_SIZE" value="4" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="TypeScript">
+          <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
+          <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
+          <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
+          <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
+          <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
+          <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
+          <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
+          <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
+          <option name="ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE" value="true" />
+          <option name="ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE" value="true" />
+        </codeStyleSettings>
+        <codeStyleSettings language="XML">
+          <indentOptions>
+            <option name="CONTINUATION_INDENT_SIZE" value="4" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="yaml">
+          <indentOptions>
+            <option name="INDENT_SIZE" value="4" />
+          </indentOptions>
+        </codeStyleSettings>
+      </value>
+    </option>
+    <option name="USE_PER_PROJECT_SETTINGS" value="true" />
+  </component>
+</project>

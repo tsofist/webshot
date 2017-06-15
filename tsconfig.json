@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "module":             "commonjs",
+        "target":             "es6",
+        "sourceMap":          false,
+        "noImplicitAny":      true,
+        "noImplicitReturns":  true,
+        "noEmitOnError":      true,
+        "removeComments":     false,
+        "preserveConstEnums": true,
+        "declaration":        false,
+        "noUnusedLocals":     true,
+        "noUnusedParameters": true,
+        "noImplicitThis":     true,
+        "strictNullChecks":   true,
+        "allowJs":            false,
+        "outDir":             "./dist",
+        "types":              [
+            "electron"
+        ]
+    },
+    "exclude":         [
+        "node_modules"
+    ],
+    "include":         [
+        "./webshot.d.ts",
+        "./src/*"
+    ]
+}
