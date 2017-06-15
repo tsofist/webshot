@@ -19,7 +19,7 @@ const DEF_SHOOTER_OPTIONS: ShooterOptions = {
 };
 
 const
-    ipcServerPath = resolvePath("ipc-server.js");
+    ipcServerPath = resolvePath(__dirname, "ipc-server.js");
 
 class ShooterImpl implements Shooter {
     private readonly child: Interaction;

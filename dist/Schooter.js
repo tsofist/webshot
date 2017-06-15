@@ -13,7 +13,7 @@ const DEF_SHOOTER_OPTIONS = {
     switches: {},
     loadTimeout: 30 * 60 * 1000 //30sec
 };
-const ipcServerPath = path_1.resolve("ipc-server.js");
+const ipcServerPath = path_1.resolve(__dirname, "ipc-server.js");
 class ShooterImpl {
     static startup(options = {}, environment = {}) {
         return new Promise((resolve, reject) => {
