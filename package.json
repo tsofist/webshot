@@ -1,6 +1,6 @@
 {
     "name":            "webshot",
-    "version":         "0.1.0",
+    "version":         "0.1.1",
     "main":            "./dist/index.js",
     "devDependencies": {
         "@types/node": "7.0.31",
