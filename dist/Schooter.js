@@ -27,7 +27,7 @@ class ShooterImpl {
             shooter.proc
                 .once("error", onError);
             setImmediate(() => {
-                if (shooter.proc.connected)
+                if (shooter.proc && shooter.proc.connected)
                     onOnline();
                 else
                     onError(new Error("Child process not started"));
@@ -47,10 +47,10 @@ class ShooterImpl {
         // proc.stderr.on("data", (data: any) => {
         //     console.error(`[${proc.pid}]`, data + "");
         // });
-        // proc.once("close", () => {
-        //     console.log(`[${proc.pid}]`, "closed");
-        // });
         // ---
+        proc.once("close", () => {
+            this.proc = this.child = undefined;
+        });
         const child = this.child = interaction_channel_1.default(proc);
         // todo UE
         child.on("uncaughtException", (stack) => {
@@ -74,7 +74,8 @@ class ShooterImpl {
         });
     }
     halt() {
-        this.proc.kill("SIGKILL");
+        if (this.proc)
+            this.proc.kill("SIGKILL");
     }
     shotHTML(format, source, to) {
         return this.shot("html", format, source, to);
@@ -83,9 +84,9 @@ class ShooterImpl {
         return this.shot("url", format, source, to);
     }
     shot(sourceFormat, format, source, to) {
-        const typeOfTo = typeof to, toIsString = typeOfTo === util_1.TS_STRING;
+        const toIsString = typeof to === util_1.TS_STRING, filename = (to ? ((toIsString && to) || (to instanceof stream_1.Stream && `${os_1.tmpdir()}/webshot-${Math.random()}`)) : false) || undefined;
         return this.invokeChild("shot", {
-            filename: (to ? ((toIsString && to) || (to instanceof stream_1.Stream && (to = `${os_1.tmpdir()}/webshot-${Math.random()}`))) : false) || undefined,
+            filename,
             [sourceFormat === "url"
                 ? "sourceUrl"
                 : "sourceHTML"]: source,
@@ -110,12 +111,18 @@ class ShooterImpl {
     }
     invokeChild(method, ...args) {
         return new Promise((resolve, reject) => {
-            this.child.invoke.call(this.child, method, ...args, (error, data) => {
-                if (error)
-                    reject(error);
-                else
-                    resolve(data);
-            });
+            if (!this.child || !this.proc)
+                reject(new Error("Shooter has stopped"));
+            else
+                this
+                    .child
+                    .invoke
+                    .call(this.child, method, ...args, (error, data) => {
+                    if (error)
+                        reject(error);
+                    else
+                        resolve(data);
+                });
         });
     }
 }

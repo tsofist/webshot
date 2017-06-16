@@ -22,8 +22,8 @@ const
     ipcServerPath = resolvePath(__dirname, "ipc-server.js");
 
 class ShooterImpl implements Shooter {
-    private readonly child: Interaction;
-    private readonly proc: ChildProcess;
+    private child?: Interaction;
+    private proc?: ChildProcess;
 
     public static startup(options: ShooterOptions = {},
                           environment: Object&object = {}): Promise<Shooter> {
@@ -31,17 +31,17 @@ class ShooterImpl implements Shooter {
             const
                 shooter = new ShooterImpl(options, environment),
                 onOnline = (): void => {
-                    shooter.proc.removeListener("error", onError);
+                    shooter.proc!.removeListener("error", onError);
                     resolve(shooter);
                 },
                 onError = (error: any): void => {
-                    shooter.proc.removeListener("online", onOnline);
+                    shooter.proc!.removeListener("online", onOnline);
                     reject(error);
                 };
-            shooter.proc
-                   .once("error", onError);
+            shooter.proc!
+                .once("error", onError);
             setImmediate(() => {
-                if (shooter.proc.connected)
+                if (shooter.proc && shooter.proc.connected)
                     onOnline();
                 else
                     onError(new Error("Child process not started"));
@@ -69,10 +69,11 @@ class ShooterImpl implements Shooter {
         // proc.stderr.on("data", (data: any) => {
         //     console.error(`[${proc.pid}]`, data + "");
         // });
-        // proc.once("close", () => {
-        //     console.log(`[${proc.pid}]`, "closed");
-        // });
         // ---
+
+        proc.once("close", () => {
+            this.proc = this.child = undefined;
+        });
 
         const child = this.child = createIPCChannel(proc);
 
@@ -90,15 +91,15 @@ class ShooterImpl implements Shooter {
         return this
             .invokeChild("shutdown")
             .then<void>(() => {
-                if (!this.proc.connected) return;
+                if (!this.proc!.connected) return;
                 return new Promise<void>((resolve) => {
-                    this.proc.once("close", () => { resolve(); });
+                    this.proc!.once("close", () => { resolve(); });
                 });
             });
     }
 
     public halt(): void {
-        this.proc.kill("SIGKILL");
+        if (this.proc) this.proc.kill("SIGKILL");
     }
 
     public shotHTML(format: ShotFormat, source: string, to?: string|NodeJS.WritableStream): Promise<any> {
@@ -114,12 +115,12 @@ class ShooterImpl implements Shooter {
                  source: string,
                  to?: string|NodeJS.WritableStream): Promise<any> {
         const
-            typeOfTo = typeof to,
-            toIsString = typeOfTo === TS_STRING;
+            toIsString = typeof to === TS_STRING,
+            filename = (to ? ((toIsString && to) || (to instanceof Stream && `${ tmpdir() }/webshot-${ Math.random() }`)) : false) || undefined;
         return this.invokeChild(
             "shot",
             {
-                filename:            (to ? ((toIsString && to) || (to instanceof Stream && (to = `${ tmpdir() }/webshot-${ Math.random() }`))) : false) || undefined,
+                filename,
                 [sourceFormat === "url"
                     ? "sourceUrl"
                     : "sourceHTML"]: source,
@@ -146,10 +147,13 @@ class ShooterImpl implements Shooter {
 
     private invokeChild(method: string, ...args: any[]): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.child.invoke.call(this.child, method, ...args, (error: any, data: string) => {
-                if (error) reject(error); else
-                    resolve(data);
-            });
+            if (!this.child || !this.proc) reject(new Error("Shooter has stopped")); else this
+                .child
+                .invoke
+                .call(this.child, method, ...args, (error: any, data: string) => {
+                    if (error) reject(error); else
+                        resolve(data);
+                });
         });
     }
 }

@@ -19,6 +19,7 @@ const electronApp = electron.app, parent = interaction_channel_1.default(process
 process.on("uncaughtException", (error) => {
     parent.emit("uncaughtException", error.stack);
 });
+process.on("SIGINT", util_1.noop);
 electronApp.on("ready", () => {
     parent.emit("ready", {
         electron: process.versions["electron"],
@@ -38,32 +39,36 @@ parent.respondTo("shutdown", (done) => {
     });
 });
 const SUP_FMT_TYPES = ["pdf", "png", "jpeg", "bmp"];
-function useBrowserWindow(url, onBrowserWindow, allowJS = false) {
+function useBrowserWindow(url, onBrowserWindow, options) {
     return new Promise((resolve, reject) => {
-        let win = new electron.BrowserWindow({
+        let win = new electron.BrowserWindow(util_1.deepMixin({
             show: false,
             alwaysOnTop: false,
+            useContentSize: false,
+            enableLargerThanScreen: true,
+            thickFrame: false,
+            titleBarStyle: "hidden",
             webPreferences: {
                 nodeIntegration: false,
-                javascript: allowJS,
+                javascript: false,
                 allowRunningInsecureContent: true,
                 webgl: false,
                 webaudio: false,
                 defaultEncoding: "utf8"
             }
-        });
+        }, options));
         const dispose = () => {
             if (win)
                 win.close();
             win = undefined;
+        }, onError = (error) => {
+            dispose();
+            reject(error);
         };
         try {
             win.webContents.setAudioMuted(true);
             win.webContents
-                .once("did-fail-load", () => {
-                dispose();
-                reject(new Error(`Failed to load ${url}`));
-            })
+                .once("did-fail-load", () => onError(new Error(`Failed to load ${url}`)))
                 .once("did-finish-load", () => {
                 try {
                     const promiseMay = onBrowserWindow(win);
@@ -71,7 +76,7 @@ function useBrowserWindow(url, onBrowserWindow, allowJS = false) {
                         promiseMay.then((data) => {
                             dispose();
                             resolve(data);
-                        }, dispose);
+                        }, onError);
                     }
                     else {
                         dispose();
@@ -79,15 +84,13 @@ function useBrowserWindow(url, onBrowserWindow, allowJS = false) {
                     }
                 }
                 catch (error) {
-                    dispose();
-                    reject(error);
+                    onError(error);
                 }
             });
             win.loadURL(url, {});
         }
         catch (error) {
-            dispose();
-            reject(error);
+            onError(error);
         }
     });
 }
@@ -96,40 +99,55 @@ function doPrint(win, options) {
         ? (win.webContents
             .executeJavaScript(`document.documentElement.innerHTML=decodeURIComponent("${encodeURIComponent(options.sourceHTML)}");`))
         : Promise.resolve()).then(() => new Promise((resolve, reject) => {
-        if (options.format.type === "pdf")
-            win
-                .webContents
-                .printToPDF(options.format, (error, data) => {
-                if (error) {
-                    reject(error);
-                }
-                else {
-                    if (options.filename)
-                        fs_1.writeFile(options.filename, data, (error) => {
-                            if (error)
-                                reject(error);
-                            else
-                                resolve(options.filename);
-                        });
+        const done = (data) => {
+            if (options.filename)
+                fs_1.writeFile(options.filename, data, (error) => {
+                    if (error)
+                        reject(error);
                     else
-                        resolve(data);
-                }
-            });
-        else
-            win
-                .capturePage((image) => {
+                        resolve(options.filename);
+                });
+            else
+                resolve(data);
+        }, capturePage = () => {
+            win.capturePage((image) => {
+                let data;
                 switch (options.format.type) {
                     case "png":
-                        resolve(image.toPNG(options.format));
+                        data = image.toPNG(options.format);
                         break;
                     case "jpeg":
-                        resolve(image.toJPEG(options.format.quality));
-                        break;
-                    case "bmp":
-                        resolve(image.toBitmap(options.format));
+                        data = image.toJPEG(options.format.quality || 75);
                         break;
                 }
+                done(data);
             });
+        };
+        if (options.format.type === "pdf") {
+            win.webContents
+                .printToPDF(options.format, (error, data) => {
+                if (error)
+                    reject(error);
+                else
+                    done(data);
+            });
+        }
+        else if (!options.format.size || options.format.size === "auto") {
+            win.webContents
+                .executeJavaScript(`(Promise.resolve({ width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight }))`)
+                .then((winSize) => {
+                win.once("resize", () => {
+                    setTimeout(() => {
+                        capturePage();
+                    }, 0 /*todo?*/);
+                });
+                win.setSize(winSize.width, winSize.height, false);
+            })
+                .catch(reject);
+        }
+        else {
+            capturePage();
+        }
     }));
 }
 parent.respondTo("shot", (options, done) => {
@@ -143,6 +161,17 @@ parent.respondTo("shot", (options, done) => {
         done("Invalid SHOT format");
     }
     else {
-        useBrowserWindow(options.sourceUrl || "about:blank", (win) => doPrint(win, options), options.sourceUrl == null).then((data) => { done(undefined, data); }, done);
+        const windowSize = { width: 1024, height: 768 };
+        if (options.format.type !== "pdf" && options.format.size && options.format.size !== "auto") {
+            windowSize.width = options.format.size.width;
+            windowSize.height = options.format.size.height;
+        }
+        useBrowserWindow(options.sourceUrl || "about:blank", (win) => doPrint(win, options), {
+            width: windowSize.width,
+            height: windowSize.height,
+            webPreferences: {
+                javascript: options.sourceUrl == null || options.format.type !== "pdf"
+            }
+        }).then((data) => { done(undefined, data); }).catch(done);
     }
 });
