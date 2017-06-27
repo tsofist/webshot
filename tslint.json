@@ -8,7 +8,7 @@
         "interface-name":                   false,
         "curly":                            false,
         "eofline":                          false,
-        "encoding":                         true,
+        "encoding":                         false,
         "forin":                            false,
         "indent":                           [true, "spaces"],
         "jsdoc-format":                     false,

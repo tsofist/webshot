@@ -27,8 +27,9 @@ class ShooterImpl {
             shooter.proc
                 .once("error", onError);
             setImmediate(() => {
-                if (shooter.proc && shooter.proc.connected)
-                    onOnline();
+                if (shooter.proc && shooter.proc.connected && shooter.child) {
+                    shooter.child.once("ready", onOnline);
+                }
                 else
                     onError(new Error("Child process not started"));
             });
