@@ -13,9 +13,8 @@ export {
 };
 
 const DEF_SHOOTER_OPTIONS: ShooterOptions = {
-    paths:       {},
-    switches:    {},
-    loadTimeout: 30 * 60 * 1000 //30sec
+    paths:      {},
+    switches:   {}
 };
 
 const
@@ -49,6 +48,7 @@ class ShooterImpl implements Shooter {
         });
     }
 
+    // noinspection JSUnusedLocalSymbols
     private constructor(options: ShooterOptions = {},
                         environment: Object&object = {}) {
         const

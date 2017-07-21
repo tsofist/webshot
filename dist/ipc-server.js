@@ -13,7 +13,7 @@ const electronApp = electron.app, parent = interaction_channel_1.default(process
     if (switches)
         for (const i in switches)
             electronApp.commandLine.appendSwitch(i, switches[i]);
-    if (!processArgs.dock && electronApp.dock)
+    if (electronApp.dock)
         electronApp.dock.hide();
 })();
 process.on("uncaughtException", (error) => {
@@ -38,7 +38,7 @@ parent.respondTo("shutdown", (done) => {
         done();
     });
 });
-const SUP_FMT_TYPES = ["pdf", "png", "jpeg", "bmp"];
+const SUP_FMT_TYPES = ["pdf", "png", "jpeg"];
 function useBrowserWindow(url, onBrowserWindow, options) {
     return new Promise((resolve, reject) => {
         let win = new electron.BrowserWindow(util_1.deepMixin({
@@ -94,7 +94,7 @@ function useBrowserWindow(url, onBrowserWindow, options) {
         }
     });
 }
-function doPrint(win, options) {
+function doCapture(win, options) {
     return (options.sourceHTML
         ? (win.webContents
             .executeJavaScript(`document.documentElement.innerHTML=decodeURIComponent("${encodeURIComponent(options.sourceHTML)}");`))
@@ -139,7 +139,7 @@ function doPrint(win, options) {
                 win.once("resize", () => {
                     setTimeout(() => {
                         capturePage();
-                    }, 0 /*todo?*/);
+                    }, 0);
                 });
                 win.setSize(winSize.width, winSize.height, false);
             })
@@ -151,7 +151,6 @@ function doPrint(win, options) {
     }));
 }
 parent.respondTo("shot", (options, done) => {
-    //todo check format options
     if ((options.sourceUrl && options.sourceHTML) || !(options.sourceUrl || options.sourceHTML)) {
         done("Ambiguously SHOT options");
     }
@@ -166,7 +165,7 @@ parent.respondTo("shot", (options, done) => {
             windowSize.width = options.format.size.width;
             windowSize.height = options.format.size.height;
         }
-        useBrowserWindow(options.sourceUrl || "about:blank", (win) => doPrint(win, options), {
+        useBrowserWindow(options.sourceUrl || "about:blank", (win) => doCapture(win, options), {
             width: windowSize.width,
             height: windowSize.height,
             webPreferences: {

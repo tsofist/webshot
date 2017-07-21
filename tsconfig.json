@@ -6,7 +6,7 @@
         "noImplicitAny":      true,
         "noImplicitReturns":  true,
         "noEmitOnError":      true,
-        "removeComments":     false,
+        "removeComments":     true,
         "preserveConstEnums": true,
         "declaration":        false,
         "noUnusedLocals":     true,
@@ -24,6 +24,6 @@
     ],
     "include":         [
         "./webshot.d.ts",
-        "./src/*"
+        "./src/**/*"
     ]
 }

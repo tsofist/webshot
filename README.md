@@ -56,7 +56,7 @@ const myShooter = startupShooter();
 /**
  * Page as HTML-string to binary Buffer
  */
-function shotHTMLToBinaryBuffer(url: string, format: ShotFormat): Promise<Buffer> {
+function shotHTMLToBinaryBuffer(html: string, format: ShotFormat): Promise<Buffer> {
     return myShooter
         .then((shooter) => shooter.shotHTML(format, url));
 }
@@ -64,7 +64,7 @@ function shotHTMLToBinaryBuffer(url: string, format: ShotFormat): Promise<Buffer
 /**
  * Page as HTML-string to local file
  */
-function shotHTMLURLToFile(url: string, format: ShotFormat, filename: string): Promise<string> {
+function shotHTMLToFile(html: string, format: ShotFormat, filename: string): Promise<string> {
     return myShooter
         .then((shooter) => shooter.shotHTML(format, url, filename));
 }
@@ -72,7 +72,7 @@ function shotHTMLURLToFile(url: string, format: ShotFormat, filename: string): P
 /**
  * Page as HTML-string to stream (e.g. Express.Response)
  */
-function shotHTMLURLToStream(url: string, format: ShotFormat, destination: NodeJS.WritableStream): Promise<NodeJS.WritableStream> {
+function shotHTMLToStream(html: string, format: ShotFormat, destination: NodeJS.WritableStream): Promise<NodeJS.WritableStream> {
     return myShooter
         .then((shooter) => shooter.shotHTML(format, url, destination));
 }
@@ -111,12 +111,14 @@ myShooter.halt();
 {
     type: "png",
     scaleFactor?: number;
+    size?: "auto"|{ height: number; width: number; };
 }
 
 // JPEG
 {
     type: "jpeg",
     quality: number;
+    size?: "auto"|{ height: number; width: number; };    
 }
 ```
 

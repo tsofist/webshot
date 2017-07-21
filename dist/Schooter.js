@@ -10,8 +10,7 @@ const util_1 = require("./util");
 const interaction_channel_1 = require("./interaction-channel");
 const DEF_SHOOTER_OPTIONS = {
     paths: {},
-    switches: {},
-    loadTimeout: 30 * 60 * 1000 //30sec
+    switches: {}
 };
 const ipcServerPath = path_1.resolve(__dirname, "ipc-server.js");
 class ShooterImpl {
@@ -40,25 +39,12 @@ class ShooterImpl {
             stdio: [null, null, null, "ipc"],
             env: util_1.deepMixin({}, process.env, environment)
         });
-        // todo debug
-        // ---
-        // proc.stdout.on("data", (data: any) => {
-        //     console.log(`[${proc.pid}]`, data + "");
-        // });
-        // proc.stderr.on("data", (data: any) => {
-        //     console.error(`[${proc.pid}]`, data + "");
-        // });
-        // ---
         proc.once("close", () => {
             this.proc = this.child = undefined;
         });
         const child = this.child = interaction_channel_1.default(proc);
-        // todo UE
         child.on("uncaughtException", (stack) => {
-            //todo restart proc?
-            //tslint:disable-next-line:no-console
             console.error("webshot detect uncaughtException in ipc-server. This can be detrimental.");
-            //tslint:disable-next-line:no-console
             if (stack)
                 console.error("\n\t" + stack.replace(/\n/g, "\n\t"));
         });

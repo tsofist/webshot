@@ -1,16 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const TS_STRING = "string", TS_OBJECT = "object", TS_NUMBER = "number", TS_BOOLEAN = "boolean", TS_UNDEFINED = "undefined", TS_FUNCTION = "function";
+const TS_STRING = "string", TS_FUNCTION = "function";
 exports.TS_STRING = TS_STRING;
-exports.TS_OBJECT = TS_OBJECT;
-exports.TS_NUMBER = TS_NUMBER;
-exports.TS_BOOLEAN = TS_BOOLEAN;
-exports.TS_UNDEFINED = TS_UNDEFINED;
 exports.TS_FUNCTION = TS_FUNCTION;
 const prototypeOfObject = Object.prototype, toString = prototypeOfObject.toString;
 const TOS_FUNCTION = toString.call(noop), TOS_OBJECT = toString.call({});
 function noop() {
-    //noop
 }
 exports.noop = noop;
 function vIn(value, list) {
@@ -56,14 +51,11 @@ exports.isPlainObject = isPlainObject;
 function deepMixin() {
     const target = arguments[0], length = arguments.length;
     let src, copyIsArray = false, copy, options, clone, i = 0;
-    //tslint:disable-next-line:prefer-const
     let name;
     for (; i < length; i++) {
         if ((options = arguments[i]) != null) {
             for (name in options) {
-                //noinspection JSUnfilteredForInLoop
                 src = target[name];
-                //noinspection JSUnfilteredForInLoop
                 copy = options[name];
                 if (target === copy)
                     continue;
@@ -77,11 +69,9 @@ function deepMixin() {
                     else {
                         clone = src && isPlainObject(src) ? src : {};
                     }
-                    //noinspection JSUnfilteredForInLoop
                     target[name] = deepMixin(clone, copy);
                 }
                 else if (copy !== undefined) {
-                    //noinspection JSUnfilteredForInLoop
                     target[name] = copy;
                 }
             }

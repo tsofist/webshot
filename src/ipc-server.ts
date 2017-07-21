@@ -2,7 +2,7 @@ import * as electron from "electron";
 import { writeFile } from "fs";
 import makeIPCChannel from "./interaction-channel";
 import { TS_FUNCTION, vIn, noop, deepMixin } from "./util";
-import { PromiseMay, ShotFormat } from "./typings";
+import { PromiseMay, ShotFormat, ShooterOptions } from "./typings";
 
 type BrowserWindow = Electron.BrowserWindow;
 
@@ -12,7 +12,7 @@ const
 
 (() => {
     const
-        processArgs = JSON.parse(process.argv[2]),
+        processArgs: ShooterOptions = JSON.parse(process.argv[2]),
         paths = processArgs.paths,
         switches = processArgs.switches;
 
@@ -21,7 +21,7 @@ const
     if (switches) for (const i in switches)
         electronApp.commandLine.appendSwitch(i, switches[i]);
 
-    if (!processArgs.dock && electronApp.dock)
+    if (electronApp.dock)
         electronApp.dock.hide();
 })();
 
@@ -60,7 +60,7 @@ interface ShotOptions {
     format: ShotFormat;
 }
 
-const SUP_FMT_TYPES = ["pdf", "png", "jpeg", "bmp"];
+const SUP_FMT_TYPES = ["pdf", "png", "jpeg"];
 
 function useBrowserWindow<T>(url: string,
                              onBrowserWindow: (win: BrowserWindow) => PromiseMay<T>,
@@ -121,7 +121,7 @@ function useBrowserWindow<T>(url: string,
     });
 }
 
-function doPrint(win: BrowserWindow, options: ShotOptions): Promise<string|Buffer> {
+function doCapture(win: BrowserWindow, options: ShotOptions): Promise<string|Buffer> {
     return (options.sourceHTML
             ? (win.webContents
                   .executeJavaScript(`document.documentElement.innerHTML=decodeURIComponent("${ encodeURIComponent(options.sourceHTML) }");`))
@@ -145,9 +145,6 @@ function doPrint(win: BrowserWindow, options: ShotOptions): Promise<string|Buffe
                         case "jpeg":
                             data = image.toJPEG(options.format.quality || 75);
                             break;
-                        // case "bmp":
-                        //     data = image.toBitmap(options.format);
-                        //     break;
                     }
                     done(data!);
                 });
@@ -196,7 +193,7 @@ parent.respondTo(
             }
             useBrowserWindow(
                 options.sourceUrl || "about:blank",
-                (win) => doPrint(win, options),
+                (win) => doCapture(win, options),
                 {
                     width:          windowSize.width,
                     height:         windowSize.height,

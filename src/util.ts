@@ -1,14 +1,10 @@
 export {
-    TS_STRING, TS_OBJECT, TS_NUMBER, TS_BOOLEAN, TS_UNDEFINED, TS_FUNCTION,
+    TS_STRING, TS_FUNCTION,
     noop, isPlainObject, deepMixin, sliced, vIn
 };
 
 const
     TS_STRING = "string",
-    TS_OBJECT = "object",
-    TS_NUMBER = "number",
-    TS_BOOLEAN = "boolean",
-    TS_UNDEFINED = "undefined",
     TS_FUNCTION = "function";
 
 const
@@ -72,7 +68,6 @@ function deepMixin(): any {
         length = arguments.length;
     let src: any, copyIsArray = false, copy: any, options: any, clone: any,
         i = 0;
-    //tslint:disable-next-line:prefer-const
     let name: string;
     for (; i < length; i++) {
         if ((options = arguments[i]) != null) {

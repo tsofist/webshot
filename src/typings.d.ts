@@ -41,28 +41,11 @@ type ShotFormat =
 interface ShooterOptions {
     paths?: { [pathName: string]: string; };
     switches?: { [switchName: string]: string; };
-    loadTimeout?: number;
 }
 
 interface Shooter {
     shutdown(): Promise<void>;
     halt(): void;
-
-    // shotPDF(url: string, formatOptions: PDFFormatOptions): Promise<Buffer>;
-    // shotPDF(url: string, formatOptions: PDFFormatOptions, filename: string): Promise<string>;
-    // shotPDF(url: string, formatOptions: PDFFormatOptions, destinationStream: NodeJS.WritableStream): Promise<NodeJS.WritableStream>;
-    //
-    // shotPNG(url: string, formatOptions: PNGFormatOptions): Promise<Buffer>;
-    // shotPNG(url: string, formatOptions: PNGFormatOptions, filename: string): Promise<string>;
-    // shotPNG(url: string, formatOptions: PNGFormatOptions, destinationStream: NodeJS.WritableStream): Promise<NodeJS.WritableStream>;
-    //
-    // renderShotPDF(html: string, formatOptions: PDFFormatOptions): Promise<Buffer>;
-    // renderShotPDF(html: string, formatOptions: PDFFormatOptions, filename: string): Promise<string>;
-    // renderShotPDF(html: string, formatOptions: PDFFormatOptions, destinationStream: NodeJS.WritableStream): Promise<NodeJS.WritableStream>;
-    //
-    // renderShotPNG(html: string, formatOptions: PNGFormatOptions): Promise<Buffer>;
-    // renderShotPNG(html: string, formatOptions: PNGFormatOptions, filename: string): Promise<string>;
-    // renderShotPNG(html: string, formatOptions: PNGFormatOptions, destinationStream: NodeJS.WritableStream): Promise<NodeJS.WritableStream>;
 
     shotURL(format: ShotFormat, url: string): Promise<Buffer>;
     shotURL(format: ShotFormat, url: string, filename: string): Promise<string>;
