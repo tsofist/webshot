@@ -39,7 +39,7 @@ function createIPCChannel(process: ChildProcess|NodeJS.Process): Interaction {
 
     emitter.emit = function () {
         if (process.connected)
-            process.send!(sliced(arguments));
+            (process as ChildProcess).send(sliced(arguments));
         return this;
     };
 
