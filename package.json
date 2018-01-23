@@ -3,12 +3,12 @@
     "version":         "0.1.5",
     "main":            "./dist/index.js",
     "devDependencies": {
-        "@types/node": "8.0.50",
-        "typescript":  "2.6.1",
-        "tslint":      "5.8.0"
+        "@types/node": "9.3.0",
+        "typescript":  "2.6.2",
+        "tslint":      "5.9.1"
     },
     "dependencies":    {
-        "electron": "1.7.9"
+        "electron": "1.7.11"
     },
     "description":     "A quick and effective way to shoot web pages",
     "directories":     {
