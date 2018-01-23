@@ -43,9 +43,6 @@
           <option name="PROPERTY_ALIGNMENT" value="1" />
           <option name="ARRAY_WRAPPING" value="0" />
         </JSON>
-        <MultiMarkdownCodeStyleSettings>
-          <option name="RIGHT_MARGIN" value="72" />
-        </MultiMarkdownCodeStyleSettings>
         <SqlCodeStyleSettings>
           <option name="WRAP_INSIDE_CREATE_TABLE" value="1" />
           <option name="KEYWORD_CASE" value="2" />

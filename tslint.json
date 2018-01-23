@@ -104,7 +104,7 @@
         "one-line":                         [true, "check-open-brace", "check-whitespace"],
         "one-variable-per-declaration":     false,
         "quotemark":                        [true, "double"],
-        "linebreak-style":                  [true, "CRLF"],
+        "linebreak-style":                  [true, "LF"],
         "prefer-template":                  [true, "allow-single-concat"],
         "prefer-const":                     true,
         "prefer-method-signature":          false,
